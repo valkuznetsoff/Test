@@ -164,7 +164,7 @@ begin
   WriteLn;
   WriteLn(WinToDos('Раздел реестра: '+StartKey));
   WriteLn(WinToDos('Искомая строка: '+SearchStr));
-  FoundKeys.Add('Раздел реестра: '+StartKey);
+  FoundKeys.Add('Раздел реестра: '+StartKey');
   FoundKeys.Add('Искомая строка: '+SearchStr);
 
 // Проверка начального ключа

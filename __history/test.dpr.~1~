@@ -21,7 +21,7 @@ var
   Cancel: boolean;
   FoundKeys: TStringList;
   StartKey, SearchStr: string;
-  iCheckKeys, iFoundKeys: integer;
+  iCheckKeys: integer;
 
 // Перекодировка из Windows в DOS
 function WinToDos(strWin: string): string;
@@ -82,24 +82,17 @@ begin
 
 // Проверка подключа на соответствие условиям поиска
             if SearchStr > '' then begin
-              if Pos(SearchStr, LowerCase(subKeys[i])) > 0 then
-              begin
-                FoundKeys.Add(s);
-                Inc(iFoundKeys)
-              end;
-            end else begin
-              FoundKeys.Add(s);
-              Inc(iFoundKeys)
-            end;
+              if Pos(SearchStr, LowerCase(subKeys[i])) > 0 then FoundKeys.Add(s);
+            end else FoundKeys.Add(s);
 
-            Write(#13, 'Проверено: '+IntToStr(iCheckKeys)+' ключей. Найдено соответствий: '+IntToStr(iFoundKeys));
+            Write(#13, 'Проверено: '+IntToStr(iCheckKeys)+' ключей. Найдено соответствий: '+IntToStr(FoundKeys.Count));
 
 // Если нажата клавиша Esc
             if KeyPressed = 27 then begin
               Cancel:=true;
               WriteLn;
               WriteLn(WinToDos('Остановка пользователем.'));
-              FoundKeys.Add('Проверено: '+IntToStr(iCheckKeys)+' ключей. Найдено соответствий: '+IntToStr(iFoundKeys));
+              FoundKeys.Add('Проверено: '+IntToStr(iCheckKeys)+' ключей. Найдено соответствий: '+IntToStr(FoundKeys.Count));
               FoundKeys.Add('Остановка пользователем.');
             end;
 
@@ -119,7 +112,7 @@ begin
       begin
         WriteLn;
         WriteLn(WinToDos('Остановка по ошибке: ' + E.Message));
-        FoundKeys.Add('Проверено: '+IntToStr(iCheckKeys)+' ключей. Найдено соответствий: '+IntToStr(iFoundKeys));
+        FoundKeys.Add('Проверено: '+IntToStr(iCheckKeys)+' ключей. Найдено соответствий: '+IntToStr(FoundKeys.Count));
         FoundKeys.Add('Остановка по ошибке: ' + E.Message);
         raise;
       end;
@@ -156,29 +149,18 @@ begin
   StartKey:='\'+StartKey;
   StartKey := IncludeTrailingPathDelimiter(StartKey);
 
-  Cancel:=false;
-  iCheckKeys:=1;
-  iFoundKeys:=0;
-  FoundKeys:=TStringList.Create;
-
   WriteLn;
   WriteLn(WinToDos('Раздел реестра: '+StartKey));
   WriteLn(WinToDos('Искомая строка: '+SearchStr));
-  FoundKeys.Add('Раздел реестра: '+StartKey);
-  FoundKeys.Add('Искомая строка: '+SearchStr);
+
+  Cancel:=false;
+  iCheckKeys:=1;
+  FoundKeys:=TStringList.Create;
 
 // Проверка начального ключа
   if SearchStr > '' then begin
-    if Pos(SearchStr, LowerCase(StartKey)) > 0 then
-    begin
-      FoundKeys.Add(StartKey);
-      Inc(iFoundKeys)
-    end;
-  end else
-  begin
-    FoundKeys.Add(StartKey);
-    Inc(iFoundKeys)
-  end;
+    if Pos(SearchStr, LowerCase(StartKey)) > 0 then FoundKeys.Add(StartKey);
+  end else FoundKeys.Add(StartKey);
 
   try
 // Старт поиска
@@ -188,7 +170,7 @@ begin
     if not Cancel then begin
       WriteLn;
       WriteLn(WinToDos('Проверка окончена'));
-      FoundKeys.Add('Проверено: '+IntToStr(iCheckKeys)+' ключей. Найдено соответствий: '+IntToStr(iFoundKeys));
+      FoundKeys.Add('Проверено: '+IntToStr(iCheckKeys)+' ключей. Найдено соответствий: '+IntToStr(FoundKeys.Count));
       FoundKeys.Add('Проверка окончена');
     end;
     str:=IncludeTrailingPathDelimiter(ExtractFileDir(ParamStr(0)));
